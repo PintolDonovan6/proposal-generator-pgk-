@@ -1,43 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 <meta charset="UTF-8">
-<title>PNG Proposal Generator</title>
+<title>Professional PNG Proposal Generator</title>
 <link rel="stylesheet" href="style.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
-
 <body>
 
 <div class="container">
-    <h1>PNG Proposal Generator</h1>
+    <h1>Professional Proposal Generator (PNG)</h1>
+
+    <label>Proposal Number</label>
+    <input type="text" id="proposalNumber" placeholder="Auto-generated or enter manually">
+
+    <label>Date</label>
+    <input type="text" id="proposalDate" placeholder="Auto-generated" readonly>
 
     <label>Client Name</label>
     <input type="text" id="clientName" placeholder="Enter client name">
+
+    <label>Project Title</label>
+    <input type="text" id="projectTitle" placeholder="Enter project title">
 
     <label>Project Details</label>
     <textarea id="projectDetails" placeholder="Enter project details"></textarea>
 
     <label>Pricing Tier</label>
     <select id="pricingTier">
-        <option value="1500">Starter – PGK 1,500</option>
-        <option value="3500">Professional – PGK 3,500</option>
-        <option value="7000">Enterprise – PGK 7,000</option>
+        <option value="1500">Starter – PGK 1,500.00</option>
+        <option value="3500">Professional – PGK 3,500.00</option>
+        <option value="7000">Enterprise – PGK 7,000.00</option>
     </select>
 
     <label>Scope of Work</label>
-    <textarea id="scope" placeholder="Describe the project scope">Website design, development, testing, and deployment.</textarea>
+    <textarea id="scope" placeholder="Describe the project scope"></textarea>
 
     <label>Timeline</label>
-    <textarea id="timeline" placeholder="Project timeline">Project completion within 4–6 weeks.</textarea>
+    <textarea id="timeline" placeholder="Project timeline"></textarea>
 
     <label>Terms & Conditions</label>
-    <textarea id="terms" placeholder="Enter payment terms">50% deposit required before work begins. Remaining balance upon completion.</textarea>
+    <textarea id="terms" placeholder="Enter payment terms and conditions"></textarea>
 
-    <button onclick="generatePDF()">Generate Proposal PDF</button>
+    <label>Additional Notes / Research Info</label>
+    <textarea id="additional" placeholder="Optional: include research insights, benefits, or other details"></textarea>
+
+    <button onclick="generatePDF()">Generate Professional Proposal PDF</button>
 </div>
 
 <script src="script.js"></script>
+<script>
+// Auto-generate proposal number and date
+document.getElementById('proposalDate').value = new Date().toLocaleDateString('en-PG');
+
+const nextProposalNumber = "001"; // Later you can auto-increment based on storage or database
+document.getElementById('proposalNumber').value = "PROP-" + nextProposalNumber;
+</script>
 </body>
 </html>
