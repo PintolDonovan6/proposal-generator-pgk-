@@ -11,31 +11,31 @@
 <body>
 
 <div class="container">
-<h1>PNG Proposal Generator</h1>
+    <h1>PNG Proposal Generator</h1>
 
-<label>Client Name</label>
-<input type="text" id="clientName" placeholder="Enter client name">
+    <label>Client Name</label>
+    <input type="text" id="clientName" placeholder="Enter client name">
 
-<label>Project Details</label>
-<textarea id="projectDetails" placeholder="Enter project details"></textarea>
+    <label>Project Details</label>
+    <textarea id="projectDetails" placeholder="Enter project details"></textarea>
 
-<label>Pricing Tier</label>
-<select id="pricingTier">
-<option value="1500">Starter – PGK 1,500</option>
-<option value="3500">Professional – PGK 3,500</option>
-<option value="7000">Enterprise – PGK 7,000</option>
-</select>
+    <label>Pricing Tier</label>
+    <select id="pricingTier">
+        <option value="1500">Starter – PGK 1,500</option>
+        <option value="3500">Professional – PGK 3,500</option>
+        <option value="7000">Enterprise – PGK 7,000</option>
+    </select>
 
-<label>Scope</label>
-<textarea id="scope">Website design, development, testing and deployment.</textarea>
+    <label>Scope of Work</label>
+    <textarea id="scope" placeholder="Describe the project scope">Website design, development, testing, and deployment.</textarea>
 
-<label>Timeline</label>
-<textarea id="timeline">Project completion within 4–6 weeks.</textarea>
+    <label>Timeline</label>
+    <textarea id="timeline" placeholder="Project timeline">Project completion within 4–6 weeks.</textarea>
 
-<label>Terms & Conditions</label>
-<textarea id="terms">50% deposit required before work begins. Remaining balance upon completion.</textarea>
+    <label>Terms & Conditions</label>
+    <textarea id="terms" placeholder="Enter payment terms">50% deposit required before work begins. Remaining balance upon completion.</textarea>
 
-<button onclick="generatePDF()">Generate Proposal PDF</button>
+    <button onclick="generatePDF()">Generate Proposal PDF</button>
 </div>
 
 <script src="script.js"></script>
