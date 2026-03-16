@@ -2,20 +2,20 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Professional PNG Proposal Generator</title>
+<title>AI Professional Proposal Generator</title>
 <link rel="stylesheet" href="style.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
 <div class="container">
-    <h1>Professional Proposal Generator (PNG)</h1>
+    <h1>AI Proposal Generator (PNG)</h1>
 
     <label>Proposal Number</label>
-    <input type="text" id="proposalNumber" placeholder="Auto-generated or enter manually">
+    <input type="text" id="proposalNumber" readonly>
 
     <label>Date</label>
-    <input type="text" id="proposalDate" placeholder="Auto-generated" readonly>
+    <input type="text" id="proposalDate" readonly>
 
     <label>Client Name</label>
     <input type="text" id="clientName" placeholder="Enter client name">
@@ -23,8 +23,8 @@
     <label>Project Title</label>
     <input type="text" id="projectTitle" placeholder="Enter project title">
 
-    <label>Project Details</label>
-    <textarea id="projectDetails" placeholder="Enter project details"></textarea>
+    <label>Instruction / Brief</label>
+    <textarea id="instruction" placeholder="Enter a brief instruction for the proposal"></textarea>
 
     <label>Pricing Tier</label>
     <select id="pricingTier">
@@ -33,28 +33,15 @@
         <option value="7000">Enterprise – PGK 7,000.00</option>
     </select>
 
-    <label>Scope of Work</label>
-    <textarea id="scope" placeholder="Describe the project scope"></textarea>
+    <button onclick="generateProposal()">Generate Proposal PDF</button>
 
-    <label>Timeline</label>
-    <textarea id="timeline" placeholder="Project timeline"></textarea>
-
-    <label>Terms & Conditions</label>
-    <textarea id="terms" placeholder="Enter payment terms and conditions"></textarea>
-
-    <label>Additional Notes / Research Info</label>
-    <textarea id="additional" placeholder="Optional: include research insights, benefits, or other details"></textarea>
-
-    <button onclick="generatePDF()">Generate Professional Proposal PDF</button>
+    <p id="status" style="color: green;"></p>
 </div>
 
 <script src="script.js"></script>
 <script>
-// Auto-generate proposal number and date
 document.getElementById('proposalDate').value = new Date().toLocaleDateString('en-PG');
-
-const nextProposalNumber = "001"; // Later you can auto-increment based on storage or database
-document.getElementById('proposalNumber').value = "PROP-" + nextProposalNumber;
+document.getElementById('proposalNumber').value = "PROP-001";
 </script>
 </body>
 </html>
