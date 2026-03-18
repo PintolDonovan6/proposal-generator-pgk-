@@ -1,127 +1,136 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>AI Proposal Generator PNG</title>
-<style>
-body { font-family: Arial, sans-serif; background: #f4f4f4; }
-.container { width: 700px; margin: 40px auto; padding: 30px; background: white; box-shadow: 0 0 15px rgba(0,0,0,0.1); border-radius: 10px; }
-h1 { text-align: center; color: #003366; margin-bottom: 25px; }
-label { display: block; margin-top: 15px; font-weight: bold; }
-input, textarea, select { width: 100%; padding: 10px; margin-top: 5px; box-sizing: border-box; border-radius: 5px; border: 1px solid #ccc; }
-textarea { min-height: 60px; }
-button { margin-top: 20px; padding: 15px; width: 100%; background: #003366; color: white; border: none; cursor: pointer; font-size: 16px; border-radius: 5px; transition: background 0.3s; }
-button:hover { background: #0055aa; }
-#status { margin-top: 15px; color: green; }
-</style>
+<title>PNG AI Proposal Generator</title>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+body { font-family: Arial; background:#eef2f7; }
+.container {
+width:750px;
+margin:40px auto;
+background:#fff;
+padding:30px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+h2 { text-align:center; }
+input, textarea, select {
+width:100%;
+padding:12px;
+margin-top:10px;
+border:1px solid #ccc;
+border-radius:5px;
+}
+button {
+width:100%;
+padding:15px;
+margin-top:20px;
+background:#002b5c;
+color:#fff;
+border:none;
+font-size:16px;
+}
+#status { margin-top:10px; }
+</style>
 </head>
+
 <body>
 
 <div class="container">
-<h1>AI Proposal Generator (PNG)</h1>
+<h2>AI Proposal Generator (PNG)</h2>
 
-<label>Proposal Number</label>
-<input type="text" id="proposalNumber" readonly value="PROP-001">
+<input id="client" placeholder="Client Name">
+<input id="title" placeholder="Project Title">
+<textarea id="instruction" placeholder="Describe project (e.g. Solar project for National Parliament PNG)"></textarea>
 
-<label>Date</label>
-<input type="text" id="proposalDate" readonly value="">
-
-<label>Client Name</label>
-<input type="text" id="clientName" placeholder="Enter client name">
-
-<label>Project Title</label>
-<input type="text" id="projectTitle" placeholder="Enter project title">
-
-<label>Instruction / Brief</label>
-<textarea id="instruction" placeholder="Enter a brief instruction for the proposal"></textarea>
-
-<label>Pricing Tier</label>
-<select id="pricingTier">
-<option value="1500">Starter – PGK 1,500.00</option>
-<option value="3500">Professional – PGK 3,500.00</option>
-<option value="7000">Enterprise – PGK 7,000.00</option>
+<select id="price">
+<option value="1500">PGK 1,500</option>
+<option value="3500">PGK 3,500</option>
+<option value="7000">PGK 7,000</option>
 </select>
 
-<button onclick="generateProposal()">Generate Proposal PDF</button>
+<button onclick="generate()">Generate Proposal</button>
+
 <p id="status"></p>
 </div>
 
 <script>
-document.getElementById('proposalDate').value = new Date().toLocaleDateString('en-PG');
+async function generate(){
 
-async function fetchLogo(clientName){
-  let domain = clientName.toLowerCase().replace(/\s+/g,'') + ".gov.pg";
-  let url = `https://logo.clearbit.com/${domain}`;
-  return new Promise(resolve=>{
-    let img = new Image(); img.src=url; img.crossOrigin="Anonymous";
-    img.onload=()=>resolve(url);
-    img.onerror=()=>resolve("logos/DefaultLogo.png");
-  });
+const { jsPDF } = window.jspdf;
+
+let client = document.getElementById("client").value;
+let title = document.getElementById("title").value;
+let instruction = document.getElementById("instruction").value;
+let price = document.getElementById("price").value;
+
+if(!client || !title || !instruction){
+alert("Fill all fields"); return;
 }
 
-async function generateProposal(){
-  const { jsPDF } = window.jspdf;
-  const client = document.getElementById("clientName").value;
-  const projectTitle = document.getElementById("projectTitle").value;
-  const instruction = document.getElementById("instruction").value;
-  const price = parseFloat(document.getElementById("pricingTier").value).toLocaleString('en-PG',{style:'currency',currency:'PGK'});
-  const proposalNumber = document.getElementById("proposalNumber").value;
-  const proposalDate = document.getElementById("proposalDate").value;
+document.getElementById("status").innerText="Generating proposal...";
 
-  if(!client || !projectTitle || !instruction){
-    alert("Please fill all fields"); return;
-  }
+// 🔴 PUT YOUR NETLIFY FUNCTION URL HERE 🔴
+const API = "https://YOUR-SITE.netlify.app/.netlify/functions/proposal";
 
-  document.getElementById("status").innerText="Generating proposal, please wait...";
+try {
 
-  let logoUrl = await fetchLogo(client);
+const res = await fetch(API,{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body: JSON.stringify({ instruction })
+});
 
-  // Replace this URL with your deployed Netlify function
-  const netlifyFunctionURL = "https://YOUR_NETLIFY_SITE.netlify.app/.netlify/functions/proposal";
+const data = await res.json();
 
-  const response = await fetch(netlifyFunctionURL, {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({ instruction })
-  });
+if(data.error){
+alert(data.error);
+document.getElementById("status").innerText="Error occurred";
+return;
+}
 
-  const data = await response.json();
-  if(data.error){ alert(data.error); document.getElementById("status").innerText="Failed"; return; }
+const p = data.proposal;
 
-  const proposalData = data.proposal;
-  const doc = new jsPDF();
-  let y=60;
+const doc = new jsPDF();
+let y=20;
 
-  let img = new Image(); img.src=logoUrl; img.crossOrigin="Anonymous";
-  img.onload=()=>addLogoAndContent(doc,img);
-  img.onerror=()=>addContent(doc);
+doc.setFontSize(18);
+doc.text("PROJECT PROPOSAL",20,y);
 
-  function addLogoAndContent(doc,imgObj){ doc.addImage(imgObj,'PNG',150,10,40,40); addContent(doc);}
-  function addContent(doc){
-    doc.setFont("Helvetica","bold"); doc.setFontSize(24); doc.text("PROJECT PROPOSAL",20,y); y+=15;
-    doc.setFont("Helvetica","normal"); doc.setFontSize(12);
-    doc.text("Proposal Number: "+proposalNumber,20,y); y+=10;
-    doc.text("Date: "+proposalDate,20,y); y+=10;
-    doc.text("Client: "+client,20,y); y+=10;
-    doc.text("Project Title: "+projectTitle,20,y); y+=15;
+y+=10;
+doc.setFontSize(12);
 
-    function addSection(title,content){
-      doc.setFont("Helvetica","bold"); doc.text(title,20,y); y+=8;
-      doc.setFont("Helvetica","normal"); let splitText=doc.splitTextToSize(content,170);
-      doc.text(splitText,20,y); y+=splitText.length*10+5;
-    }
+doc.text("Client: "+client,20,y); y+=8;
+doc.text("Project: "+title,20,y); y+=10;
 
-    addSection("Project Details:",proposalData.projectDetails);
-    addSection("Scope of Work:",proposalData.scope);
-    addSection("Timeline:",proposalData.timeline);
-    addSection("Terms & Conditions:",proposalData.terms);
-    if(proposalData.additionalNotes) addSection("Additional Notes:",proposalData.additionalNotes);
+function section(title,text){
+doc.text(title,20,y); y+=6;
+let lines = doc.splitTextToSize(text,170);
+doc.text(lines,20,y);
+y += lines.length*6 + 4;
+}
 
-    doc.setFont("Helvetica","bold"); doc.setFontSize(14); doc.text("Total Price: "+price,20,y+10);
-    doc.save("Proposal-"+client+".pdf");
-    document.getElementById("status").innerText="Proposal generated successfully!";
-  }
+section("Project Details:", p.projectDetails);
+section("Scope of Work:", p.scope);
+section("Timeline:", p.timeline);
+section("Terms & Conditions:", p.terms);
+section("Additional Notes:", p.additionalNotes);
+
+doc.text("Total Price: PGK "+price,20,y+10);
+
+doc.save("Proposal-"+client+".pdf");
+
+document.getElementById("status").innerText="Proposal generated successfully";
+
+} catch (err) {
+
+alert("Failed to connect to AI");
+document.getElementById("status").innerText="Connection failed";
+
+}
 }
 </script>
 
